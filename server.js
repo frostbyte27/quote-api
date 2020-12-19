@@ -65,13 +65,26 @@ function addQuoteHandler(req, res, next){
     if(req.query.quote && req.query.person){
         console.log('Adding new Quote:\n"'+ req.query.quote+'"\n\t\t'+req.query.person);
         //build a quote object and add it to the array
-        quotes.push({ quote:req.query.quote, person: req.query.person});
+        let newQuote = { quote:req.query.quote, person: req.query.person};
+        quotes.push(newQuote);
+        res.status(201).send({quote: newQuote});
     }
     else{
         //if not, respond with error code 400
         res.sendStatus(400);
     }
 }
+
+
+function updateQuoteHandler(req, res, next){
+
+}
+
+function deleteQuoteHandler(req, res, next){
+
+}
+
+
 
 //-----------Initialize App----------------------
 
@@ -83,6 +96,11 @@ app.get(QUOTES_BASE, byAuthorHandler);
 app.get(QUOTES_BASE, allQuotesHandler);
 
 app.post(QUOTES_BASE, addQuoteHandler);
+
+/**Bonus Features */
+
+
+
 
 //Start listening
 app.listen(PORT, () => {
