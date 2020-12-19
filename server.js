@@ -8,7 +8,8 @@ const PORT = process.env.PORT || 4001;
 
 //--------------Paths----------------
 const RAND_QUOTE = '/api/quotes/random'
-const ALL_QUOTES = '/api/quotes'
+const QUOTES_BASE = '/api/quotes'
+// const PERSON_QUOTES = '/api/quotes?person'
 
 
 //--------------Routing Functions---------------
@@ -28,20 +29,46 @@ function randomQuoteHandler(req, res, next){
     }
 }
 
-// function allQuotesHandler(req, res, next){
-    
-// }
 
-// function randomQuoteHandler(req, res, next){
+function byAuthorHandler(req, res, next){
+    //check if there is a person specified by query string
+    if(req.query.person){
+        //filter the quotes array
+        let byAuthor = quotes.filter( (quote) =>{
+            return quote.person === req.query.person;
+        })   
+
+        console.log('Found all quotes by: '+req.query.person);
+        res.status(200).send({quotes: byAuthor});
+    }
+    else{
+        next();
+    }
+
+}
+
+function allQuotesHandler(req, res, next){
     
-// }
+    if(quotes){
+        // console.log('Got all quotes');
+        //create wrapper object
+        let quotesWrapper = {}
+        quotesWrapper.quotes = quotes;
+        res.status(200).send(quotesWrapper);
+        return;
+    }
+    res.send(404);
+}
+
 
 //-----------Initialize App----------------------
 
 app.use(express.static('public'));
 
-//add all routes
+//add routes to stack
 app.get(RAND_QUOTE, randomQuoteHandler);
+app.get(QUOTES_BASE, byAuthorHandler);
+app.get(QUOTES_BASE, allQuotesHandler);
 
 //Start listening
 app.listen(PORT, () => {
